@@ -40,7 +40,7 @@
     a{color:inherit;text-decoration:none}
     html,body{overflow-x:hidden}
 
-    /* ---------- TOPBAR (sticky desktop, non-sticky mobile) ---------- */
+    /* ---------- TOPBAR (sticky desktop) ---------- */
     .topbar{
       position:sticky; top:0; z-index:1000;
       background:
@@ -61,31 +61,31 @@
     .topbar__center{grid-area:center;display:flex;justify-content:center}
     .topbar__right{grid-area:right;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 
+    /* ---------- MOBILE: две строки: [логотип  телеграм], затем [навигация] ---------- */
     @media (max-width:768px){
-      /* компактнее размеры */
-      :root{ --logo-size:56px; --tg-size:18px; }
-      .topbar{
-        position: sticky;   /* закрепляем на мобилке */
-        top: 0;
-        border-bottom:0;
-      }
+      :root{ --logo-size:40px; --tg-size:16px; }
+      .topbar{ position: sticky; top: 0; border-bottom:0; }
       .topbar__inner{
-        grid-template-columns:1fr;
-        grid-template-areas:"left" "center" "right";
-        row-gap:10px;
-        padding:6px 10px 10px; /* меньше высота */
-        justify-items:center;
+        grid-template-columns:auto auto;                 /* две колонки в первой строке */
+        grid-template-areas:
+          "center left"                                  /* 1-я строка: логотип, затем Телеграм */
+          "right  right";                                /* 2-я строка: навигация на всю ширину */
+        row-gap:6px;
+        padding:4px 8px 6px;
+        align-items:center;
       }
-      .topbar__left,.topbar__right{justify-content:center}
+      .topbar__center{ justify-content:flex-end; }       /* логотип справа первой строки */
+      .topbar__left{ justify-content:flex-start; }       /* Телеграм слева первой строки */
       .topbar__right{
-        flex-wrap:nowrap;gap:14px;padding-inline:10px;
-        overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+        justify-content:center; flex-wrap:nowrap; gap:10px;
+        padding:4px 8px !important;                      /* перебиваем inline padding у nav */
+        overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
       }
       .topbar__right::-webkit-scrollbar{display:none}
-      .glass-btn{padding:6px 9px;font-size:14px;line-height:1.1} /* ниже высота кнопок */
+      .glass-btn{padding:4px 8px;font-size:13px;line-height:1.1}
     }
 
-    /* ---------- Buttons (без белых обводок/бликов) ---------- */
+    /* ---------- Buttons ---------- */
     .glass-btn{
       position:relative;display:inline-flex;align-items:center;gap:8px;
       padding:9px 12px;border-radius:999px;font-weight:600;color:#0b0b0b;
@@ -128,7 +128,7 @@
 
     .card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff}
 
-    /* ---------- Gallery (4:5 — Instagram portrait) ---------- */
+    /* ---------- Gallery (4:5) ---------- */
     .card__media{
       aspect-ratio:4 / 5;
       background:#f3f4f6;
@@ -179,7 +179,7 @@
     .sidebar{display:grid;gap:16px}
     .ad__label{color:var(--muted);font-size:14px}
 
-    /* Инлайновая реклама внутри ленты на моб. */
+    /* Инлайновая реклама на моб. */
     @media (max-width:768px){
       .page{grid-template-columns:1fr}
       .sidebar{display:none}
@@ -205,9 +205,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,.08);
     }
     .ad-card__media { aspect-ratio: 4 / 3; background:#f3f4f6; }
-    .ad-card__media img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-    }
+    .ad-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .ad-card__body { padding: 12px 14px; }
     .ad-card__title { font-size: 16px; font-weight: 700; margin: 0 0 6px; }
     .ad-card__meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
@@ -424,10 +422,8 @@
 </footer>
 
 <script>
-  // Год в футере
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  // Переключение вкладок городов (визуально)
   (function () {
     const tabs = document.querySelectorAll('.city-tabs button');
     if (!tabs.length) return;
@@ -439,10 +435,8 @@
     });
   })();
 
-  // Галереи: свайпы, точки, стрелки, автопауза несфокусированных видео
   (function () {
     const galleries = document.querySelectorAll('.gallery');
-
     galleries.forEach(gallery => {
       const viewport = gallery.querySelector('.gallery__viewport');
       const track    = gallery.querySelector('.gallery__track');
@@ -450,10 +444,7 @@
       const prevBtn  = gallery.querySelector('.gallery__arrow--prev');
       const nextBtn  = gallery.querySelector('.gallery__arrow--next');
       let dotsWrap   = gallery.querySelector('.gallery__dots');
-
       if (!viewport || !track || slides.length === 0) return;
-
-      // Один слайд — скрываем управление
       if (slides.length < 2) {
         if (prevBtn) prevBtn.style.display = 'none';
         if (nextBtn) nextBtn.style.display = 'none';
@@ -461,14 +452,8 @@
         track.style.transform = 'translateX(0%)';
         return;
       }
-
-      let index = Math.min(
-        parseInt(gallery.getAttribute('data-start') || '0', 10),
-        slides.length - 1
-      );
+      let index = Math.min(parseInt(gallery.getAttribute('data-start') || '0', 10), slides.length - 1);
       let startX = 0, currentX = 0, dragging = false;
-
-      // Точки (создать при необходимости)
       if (!dotsWrap) {
         dotsWrap = document.createElement('div');
         dotsWrap.className = 'gallery__dots';
@@ -493,7 +478,6 @@
           else d.removeAttribute('aria-current');
         });
       }
-
       function pauseAllExcept(i){
         slides.forEach((slide, si) => {
           const v = slide.querySelector('video');
@@ -503,26 +487,19 @@
           }
         });
       }
-
       function goTo(i){
         index = Math.max(0, Math.min(i, slides.length - 1));
         track.style.transform = `translateX(${-100 * index}%)`;
         pauseAllExcept(index);
         updateDots();
       }
-
-      // Стрелки
       if (prevBtn) prevBtn.addEventListener('click', () => goTo(index - 1));
       if (nextBtn) nextBtn.addEventListener('click', () => goTo(index + 1));
-
-      // Клавиатура
       gallery.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') goTo(index - 1);
         if (e.key === 'ArrowRight') goTo(index + 1);
       });
       gallery.setAttribute('tabindex', '0');
-
-      // Свайпы
       function onDown(clientX){ dragging = true; startX = clientX; currentX = clientX; track.style.transition = 'none'; }
       function onMove(clientX){
         if (!dragging) return;
@@ -552,46 +529,9 @@
       viewport.addEventListener('touchstart', e => onDown(e.touches[0].clientX), {passive:true});
       viewport.addEventListener('touchmove',  e => onMove(e.touches[0].clientX),  {passive:true});
       viewport.addEventListener('touchend', onUp);
-
-      // Инициализация
       buildDots();
       goTo(index);
     });
-  })();
-
-  // Инлайновая реклама на мобилке: пост → реклама
-  (function(){
-    const mq = window.matchMedia('(max-width: 768px)');
-    const feed = document.querySelector('.feed');
-    const sidebar = document.querySelector('.sidebar');
-    if (!feed || !sidebar) return;
-    const allAds = Array.from(sidebar.querySelectorAll('.ad'));
-    let applied = false;
-
-    function toMobile(){
-      if(applied) return;
-      const cards = Array.from(feed.querySelectorAll('.card'));
-      let adIdx = 0;
-      cards.forEach((card) => {
-        if(adIdx >= allAds.length) return;
-        const ad = allAds[adIdx++];
-        ad.classList.add('ad--inline');
-        card.insertAdjacentElement('afterend', ad);
-      });
-      applied = true;
-    }
-    function toDesktop(){
-      if(!applied) return;
-      const inlineAds = Array.from(document.querySelectorAll('.ad--inline'));
-      inlineAds.forEach(ad => {
-        ad.classList.remove('ad--inline');
-        sidebar.appendChild(ad);
-      });
-      applied = false;
-    }
-    function apply(e){ e.matches ? toMobile() : toDesktop(); }
-    apply(mq);
-    mq.addEventListener('change', apply);
   })();
 </script>
 
