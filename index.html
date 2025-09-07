@@ -62,22 +62,27 @@
     .topbar__right{grid-area:right;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 
     @media (max-width:768px){
+      /* компактнее размеры */
+      :root{ --logo-size:56px; --tg-size:18px; }
       .topbar{
+        position: sticky;   /* закрепляем на мобилке */
+        top: 0;
         border-bottom:0;
-        position: static;  /* мобильная — НЕ закреплена */
-        top:auto;
       }
       .topbar__inner{
         grid-template-columns:1fr;
         grid-template-areas:"left" "center" "right";
-        row-gap:22px;padding:16px 16px 34px;justify-items:center;
+        row-gap:10px;
+        padding:6px 10px 10px; /* меньше высота */
+        justify-items:center;
       }
       .topbar__left,.topbar__right{justify-content:center}
       .topbar__right{
-        flex-wrap:nowrap;gap:18px;padding-inline:14px;
+        flex-wrap:nowrap;gap:14px;padding-inline:10px;
         overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
       }
       .topbar__right::-webkit-scrollbar{display:none}
+      .glass-btn{padding:6px 9px;font-size:14px;line-height:1.1} /* ниже высота кнопок */
     }
 
     /* ---------- Buttons (без белых обводок/бликов) ---------- */
@@ -190,49 +195,27 @@
       .glass-btn{background:rgba(255,255,255,.98);border-color:rgba(0,0,0,.08)}
     }
     .ad-card {
-    display: block;
-    border-radius: 16px; /* скругление */
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    background: #fff;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-  }
-  .ad-card__media {
-    aspect-ratio: 4 / 3;
-    background:#f3f4f6;
-  }
-  .ad-card__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .ad-card__body {
-    padding: 12px 14px;
-  }
-  .ad-card__title {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0 0 6px;
-  }
-  .ad-card__meta {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-  .ad-card__btn {
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: rgba(0,0,0,.04);
-  }
-  .ad-card__btn:hover {
-    background: rgba(0,0,0,.08);
-  }
+      display: block;
+      border-radius: 16px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+    .ad-card__media { aspect-ratio: 4 / 3; background:#f3f4f6; }
+    .ad-card__media img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .ad-card__body { padding: 12px 14px; }
+    .ad-card__title { font-size: 16px; font-weight: 700; margin: 0 0 6px; }
+    .ad-card__meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .ad-card__btn {
+      display: inline-block; font-size: 13px; font-weight: 600;
+      padding: 8px 12px; border-radius: 999px; background: rgba(0,0,0,.04);
+    }
+    .ad-card__btn:hover { background: rgba(0,0,0,.08); }
   </style>
 </head>
 <body>
