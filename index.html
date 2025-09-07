@@ -66,19 +66,19 @@
       :root{ --logo-size:40px; --tg-size:16px; }
       .topbar{ position: sticky; top: 0; border-bottom:0; }
       .topbar__inner{
-        grid-template-columns:auto auto;                 /* две колонки в первой строке */
+        grid-template-columns:auto auto;
         grid-template-areas:
-          "center left"                                  /* 1-я строка: логотип, затем Телеграм */
-          "right  right";                                /* 2-я строка: навигация на всю ширину */
+          "center left"
+          "right  right";
         row-gap:6px;
         padding:4px 8px 6px;
         align-items:center;
       }
-      .topbar__center{ justify-content:flex-end; }       /* логотип справа первой строки */
-      .topbar__left{ justify-content:flex-start; }       /* Телеграм слева первой строки */
+      .topbar__center{ justify-content:flex-end; }
+      .topbar__left{ justify-content:flex-start; }
       .topbar__right{
         justify-content:center; flex-wrap:nowrap; gap:10px;
-        padding:4px 8px !important;                      /* перебиваем inline padding у nav */
+        padding:4px 8px !important;
         overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
       }
       .topbar__right::-webkit-scrollbar{display:none}
@@ -179,12 +179,24 @@
     .sidebar{display:grid;gap:16px}
     .ad__label{color:var(--muted);font-size:14px}
 
-    /* Инлайновая реклама на моб. */
+    /* Мобильная: чередование пост-реклама в ленте (сайдбар скрыт) */
     @media (max-width:768px){
       .page{grid-template-columns:1fr}
       .sidebar{display:none}
-      .ad--inline{display:block;margin:8px 0;border:1px dashed var(--border);border-radius:var(--radius);min-height:160px;background:#fff}
-      .ad--inline .ad__label{color:var(--muted);font-size:14px;padding:16px}
+      .ad--inline{
+        display:block;
+        margin:8px 0;
+        padding:5px;                 /* ↓ уменьшили на 1px, чтобы был виден пунктир */
+        border:1px dashed var(--border);
+        border-radius:var(--radius);
+        background:#fff;
+        overflow:hidden;
+        box-sizing:border-box;
+      }
+      .ad--inline .ad-card{
+        border-radius:calc(var(--radius) - 1px); /* аккуратный скруглённый внутренний блок */
+      }
+      .ad--inline .ad__label{color:var(--muted);font-size:14px;padding:0}
     }
 
     .footer{border-top:1px solid var(--border);margin-top:32px}
@@ -268,7 +280,6 @@
               </div>
             </div>
           </div>
-          <!-- Без стрелок и точек — т.к. один слайд -->
         </div>
       </div>
       <div class="card__body">
@@ -383,35 +394,35 @@
         <a class="ad-card"
            href="https://5verst.ru/plyazh40letpobedy/"
            target="_blank" rel="noopener"
-           aria-label="Кофейня «Кофе Лето» — открыть на Яндекс Картах">
+           aria-label="5 ВЁРСТ АНАПА — сайт">
           <div class="ad-card__media">
             <img src="https://5verst.ru/plyazh40letpobedy/wp-content/uploads/sites/179/2024/09/x1g9PEm7ij-Naf1sNQSwzsaDINEfF1_jvijro3KUmuY2Qk0zhKahT5DbWy9olq1ekJmD7uc3UEmtnnRiR8BLH28e-2048x1536.webp"
                  alt="5 ВЁРСТ АНАПА">
           </div>
           <div class="ad-card__body">
             <div class="ad-card__title">5 ВЁРСТ АНАПА</div>
-            <div class="ad-card__meta">Бесплатные дружеские старты на 5 км каждую субботу на пляже 40 лет Победы</div>
-            <div class="ad-card__btn">Подробнее на сайте 5 вёрст</div>
+            <div class="ad-card__meta">Бесплатные старты на 5 км по субботам</div>
+            <div class="ad-card__btn">Подробнее</div>
           </div>
         </a></div>
     </div>
-<div class="ad">
+    <div class="ad">
       <div class="ad__label">
         <a class="ad-card"
            href="https://t.me/wherelera"
            target="_blank" rel="noopener"
-           aria-label="Кофейня «Кофе Лето» — открыть на Яндекс Картах">
+           aria-label="Креативный дизайн — Телеграм">
           <div class="ad-card__media">
-            <img src="murz.png"
-                 alt="5 ВЁРСТ АНАПА">
+            <img src="murz.png" alt="Креативный дизайн">
           </div>
           <div class="ad-card__body">
             <div class="ad-card__title">Креативный дизайн</div>
-            <div class="ad-card__meta">Валерия Мурзина - дизайнер, спортсменка и просто красавица</div>
-            <div class="ad-card__btn">Заказать дизайн</div>
+            <div class="ad-card__meta">Айдентика • Вёрстка • SMM</div>
+            <div class="ad-card__btn">Заказать</div>
           </div>
         </a></div>
-    </div>  </aside>
+    </div>
+  </aside>
 </main>
 
 <footer class="footer">
@@ -532,6 +543,52 @@
       buildDots();
       goTo(index);
     });
+  })();
+
+  /* Моб. чередование: пост — реклама — пост — реклама (клонируем из сайдбара) */
+  (function(){
+    const mq = window.matchMedia('(max-width: 768px)');
+    const feed = document.querySelector('.feed');
+    const sidebar = document.querySelector('.sidebar');
+    if (!feed || !sidebar) return;
+
+    const sourceAds = Array.from(sidebar.querySelectorAll('.ad')); // оригиналы остаются в сайдбаре
+    const INLINE_CLASS = 'ad--inline';
+    const CLONE_ATTR = 'data-inline-clone';
+
+    function makeInlineAd(idx){
+      const ad = sourceAds[idx % sourceAds.length];
+      if (!ad) return null;
+      const clone = ad.cloneNode(true);
+      clone.classList.add(INLINE_CLASS);
+      clone.setAttribute(CLONE_ATTR, 'true');
+      return clone;
+    }
+
+    function clearInlineAds(){
+      feed.querySelectorAll(`.${INLINE_CLASS}[${CLONE_ATTR}="true"]`).forEach(n => n.remove());
+    }
+
+    function applyMobile(){
+      clearInlineAds();
+      const cards = Array.from(feed.querySelectorAll('.card'));
+      if (!cards.length || !sourceAds.length) return;
+      let adIndex = 0;
+      // Вставляем после каждого поста
+      cards.forEach(card => {
+        const inline = makeInlineAd(adIndex++);
+        if (inline) card.insertAdjacentElement('afterend', inline);
+      });
+    }
+
+    function applyDesktop(){
+      clearInlineAds();
+      // Ничего не переносим, оригинальные блоки уже в сайдбаре
+    }
+
+    function handle(e){ e.matches ? applyMobile() : applyDesktop(); }
+    handle(mq);
+    mq.addEventListener('change', handle);
   })();
 </script>
 
