@@ -1,949 +1,493 @@
 <!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Куда намылились — Афиша, заведения и места Анапы, Геленджика и Новороссийска</title>
-    <meta name="description" content="Сайт-блог с афишей, заведениями и местами Анапы, Геленджика и Новороссийска."/>
-    <meta name="color-scheme" content="light"/>
-    <meta name="theme-color" content="#cc4964"/>
-    <style>
-        :root {
-            --brand: #cc4964;
-            --brand-rgb: 204, 73, 100;
-            --bg: #ffffff;
-            --text: #0a0a0a;
-            --muted: #6b7280;
-            --border: #e5e7eb;
-            --max: 1120px;
-            --radius: 16px;
-
-            --glass-blur: 20px;
-            --glass-sat: 1.2;
-            --bar-alpha: .14;
-
-            --btn-alpha: .30;
-            --btn-alpha-hover: .38;
-            --btn-outer-shadow: .10;
-
-            --stroke-alpha: .35;
-            --shadow-alpha: .16;
-
-            --logo-size: 80px;
-            --tg-size: 22px;
-        }
-
-        *, *::before, *::after {
-            box-sizing: border-box
-        }
-
-        html, body {
-            height: 100%
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", sans-serif
-        }
-
-        img {
-            max-width: 100%;
-            display: block
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none
-        }
-
-        html, body {
-            overflow-x: hidden
-        }
-
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: linear-gradient(180deg, rgba(var(--brand-rgb), .08), rgba(255, 255, 255, .04)),
-            rgba(255, 255, 255, var(--bar-alpha));
-            -webkit-backdrop-filter: saturate(var(--glass-sat)) blur(var(--glass-blur));
-            backdrop-filter: saturate(var(--glass-sat)) blur(var(--glass-blur));
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .50), 0 8px 24px rgba(0, 0, 0, var(--shadow-alpha));
-            border-bottom: 1px solid rgba(255, 255, 255, var(--stroke-alpha));
-            overflow: visible;
-        }
-
-        .topbar__inner {
-            max-width: var(--max);
-            margin: 0 auto;
-            padding: 10px 16px;
-            display: grid;
-            grid-template-columns:1fr auto 1fr;
-            grid-template-areas:"left center right";
-            align-items: center;
-            gap: 12px;
-        }
-
-        .topbar__left {
-            grid-area: left;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: flex-start
-        }
-
-        .topbar__center {
-            grid-area: center;
-            display: flex;
-            justify-content: center
-        }
-
-        .topbar__right {
-            grid-area: right;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            flex-wrap: wrap
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --logo-size: 40px;
-                --tg-size: 16px;
-            }
-
-            .topbar {
-                position: sticky;
-                top: 0;
-                border-bottom: 0;
-            }
-
-            .topbar__inner {
-                grid-template-columns:auto auto;
-                grid-template-areas:
-          "center left"
-          "right  right";
-                row-gap: 6px;
-                padding: 4px 8px 6px;
-                align-items: center;
-            }
-
-            .topbar__center {
-                justify-content: flex-end;
-            }
-
-            .topbar__left {
-                justify-content: flex-start;
-            }
-
-            .topbar__right {
-                justify-content: center;
-                flex-wrap: nowrap;
-                gap: 10px;
-                padding: 4px 8px !important;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-            }
-
-            .topbar__right::-webkit-scrollbar {
-                display: none
-            }
-
-            .glass-btn {
-                padding: 4px 8px;
-                font-size: 13px;
-                line-height: 1.1
-            }
-        }
-
-        .glass-btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px;
-            border-radius: 999px;
-            font-weight: 600;
-            color: #0b0b0b;
-            background: rgba(255, 255, 255, var(--btn-alpha));
-            border: 1px solid transparent;
-            -webkit-backdrop-filter: saturate(1.1) blur(calc(var(--glass-blur) * .6));
-            backdrop-filter: saturate(1.1) blur(calc(var(--glass-blur) * .6));
-            box-shadow: 0 6px 16px rgba(0, 0, 0, var(--btn-outer-shadow));
-            transition: background .15s ease, transform .06s ease, box-shadow .15s ease;
-            white-space: nowrap;
-        }
-
-        .glass-btn:hover {
-            background: rgba(255, 255, 255, var(--btn-alpha-hover));
-            box-shadow: 0 8px 20px rgba(0, 0, 0, .12)
-        }
-
-        .glass-btn:active {
-            transform: translateY(1px)
-        }
-
-        .glass-btn:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 0, 0, .06), 0 8px 20px rgba(0, 0, 0, .12)
-        }
-
-        .tg-ic {
-            width: var(--tg-size);
-            height: var(--tg-size);
-            flex: 0 0 var(--tg-size);
-            display: block;
-            transform: translateY(1px)
-        }
-
-        .logo-circle {
-            background: #fff;
-            border-radius: 50%;
-            width: calc(var(--logo-size) + 2px);
-            height: calc(var(--logo-size) + 2px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
-        }
-
-        .logo-circle img {
-            width: var(--logo-size);
-            height: var(--logo-size);
-            border-radius: 50%;
-            object-fit: cover
-        }
-
-        .city-tabs {
-            border-bottom: 1px solid var(--border);
-            padding: 12px 16px;
-            max-width: var(--max);
-            margin: 0 auto;
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap
-        }
-
-        .city-tabs button {
-            padding: 8px 14px;
-            border: 1px solid var(--border);
-            background: #fff;
-            border-radius: 999px;
-            cursor: pointer
-        }
-
-        .city-tabs button[aria-pressed="true"] {
-            background: var(--brand);
-            color: #fff;
-            border-color: var(--brand)
-        }
-
-        .page {
-            max-width: var(--max);
-            margin: 24px auto;
-            padding: 0 16px;
-            display: grid;
-            grid-template-columns:1fr 320px;
-            gap: 24px
-        }
-
-        @media (max-width: 980px) {
-            .page {
-                grid-template-columns:1fr
-            }
-        }
-
-        .feed {
-            display: grid;
-            gap: 16px
-        }
-
-        @media (min-width: 981px) {
-            .feed {
-                grid-template-columns:repeat(2, minmax(0, 1fr))
-            }
-        }
-
-        .card {
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            background: #fff
-        }
-
-        .card__media {
-            aspect-ratio: 4 / 5;
-            background: #f3f4f6;
-            position: relative;
-            border-bottom: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .gallery {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            user-select: none;
-            touch-action: pan-y
-        }
-
-        .gallery__viewport {
-            width: 100%;
-            height: 100%;
-            overflow: hidden
-        }
-
-        .gallery__track {
-            height: 100%;
-            display: flex;
-            transition: transform .35s ease;
-            will-change: transform
-        }
-
-        .slide {
-            min-width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            background: #eee
-        }
-
-        .slide > img,
-        .slide > picture > img,
-        .slide > video,
-        .slide > iframe {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border: 0
-        }
-
-        .gallery__arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 36px;
-            height: 36px;
-            border-radius: 999px;
-            display: grid;
-            place-items: center;
-            background: rgba(255, 255, 255, .32);
-            border: 1px solid rgba(0, 0, 0, .06);
-            -webkit-backdrop-filter: saturate(1.1) blur(10px);
-            backdrop-filter: saturate(1.1) blur(10px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
-            color: #0b0b0b;
-            cursor: pointer;
-        }
-
-        .gallery__arrow:hover {
-            background: rgba(255, 255, 255, .42)
-        }
-
-        .gallery__arrow--prev {
-            left: 10px
-        }
-
-        .gallery__arrow--next {
-            right: 10px
-        }
-
-        .gallery__dots {
-            position: absolute;
-            left: 50%;
-            bottom: 10px;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, .24);
-            border: 1px solid rgba(0, 0, 0, .06);
-            -webkit-backdrop-filter: saturate(1.1) blur(8px);
-            backdrop-filter: saturate(1.1) blur(8px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
-        }
-
-        .gallery__dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, .25);
-            border: 0;
-            cursor: pointer;
-            padding: 0
-        }
-
-        .gallery__dot[aria-current="true"] {
-            background: #0a0a0b
-        }
-
-        .card__body {
-            padding: 14px 16px
-        }
-
-        .card__kicker {
-            font-size: 12px;
-            letter-spacing: .06em;
-            color: var(--muted);
-            text-transform: uppercase
-        }
-
-        .card__title {
-            margin: 6px 0 8px;
-            font-size: 20px;
-            line-height: 1.3
-        }
-
-        .card__meta {
-            display: flex;
-            gap: 12px;
-            color: var(--muted);
-            font-size: 14px
-        }
-
-        .sidebar {
-            display: grid;
-            gap: 16px
-        }
-
-        .slot__label {
-            color: var(--muted);
-            font-size: 14px
-        }
-
-        @media (max-width: 768px) {
-            .page {
-                grid-template-columns:1fr
-            }
-
-            .sidebar {
-                display: none
-            }
-
-            .slot--inline {
-                display: block;
-                margin: 8px 0;
-                padding: 5px;
-                border: 1px dashed var(--border);
-                border-radius: var(--radius);
-                background: #fff;
-                overflow: hidden;
-                box-sizing: border-box;
-            }
-
-            .slot--inline .s-card {
-                border-radius: calc(var(--radius) - 1px);
-            }
-
-            .slot--inline .slot__label {
-                color: var(--muted);
-                font-size: 14px;
-                padding: 0
-            }
-        }
-
-        .footer {
-            border-top: 1px solid var(--border);
-            margin-top: 32px
-        }
-
-        .footer__inner {
-            max-width: var(--max);
-            margin: 0 auto;
-            padding: 20px 16px;
-            color: var(--muted);
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap
-        }
-
-        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-            .topbar {
-                background: rgba(255, 255, 255, .9)
-            }
-
-            .glass-btn {
-                background: rgba(255, 255, 255, .98);
-                border-color: rgba(0, 0, 0, .08)
-            }
-        }
-
-        .s-card {
-            display: block;
-            border-radius: 16px;
-            overflow: hidden;
-            text-decoration: none;
-            color: inherit;
-            background: #fff;
-            border: 1px solid var(--border);
-        }
-
-        .s-card__media {
-            aspect-ratio: 4 / 3;
-            background: #f3f4f6;
-        }
-
-        .s-card__media img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .s-card__body {
-            padding: 12px 14px;
-        }
-
-        .s-card__title {
-            font-size: 16px;
-            font-weight: 700;
-            margin: 0 0 6px;
-        }
-
-        .s-card__meta {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 10px;
-        }
-
-        .s-card__btn {
-            display: inline-block;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 8px 12px;
-            border-radius: 999px;
-            background: rgba(0, 0, 0, .04);
-        }
-
-        .s-card__btn:hover {
-            background: rgba(0, 0, 0, .08);
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Куда намылились — Афиша, заведения и места Анапы, Геленджика и Новороссийска</title>
+  <meta name="description" content="Сайт-блог с афишей, заведениями и местами Анапы, Геленджика и Новороссийска."/>
+  <meta name="color-scheme" content="light"/>
+  <meta name="theme-color" content="#cc4964"/>
+  <style>
+    :root{
+  --brand:#cc4964; --brand-rgb:204,73,100;
+  --bg:#ffffff; --text:#0a0a0a; --muted:#6b7280; --border:#e5e7eb;
+  --max:1120px; --radius:16px;
+
+  --glass-blur:20px; --glass-sat:1.2; --bar-alpha:.14;
+  --btn-alpha:.30; --btn-alpha-hover:.38; --btn-outer-shadow:.10;
+  --stroke-alpha:.35; --shadow-alpha:.16;
+  --logo-size:80px; --tg-size:22px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+html,body{overflow-x:hidden}
+
+/* ---------- TOPBAR (sticky) ---------- */
+.topbar{position:sticky;top:0;z-index:1000;
+  background:linear-gradient(180deg, rgba(var(--brand-rgb), .08), rgba(255,255,255,.04)), rgba(255,255,255,var(--bar-alpha));
+  -webkit-backdrop-filter:saturate(var(--glass-sat)) blur(var(--glass-blur));
+  backdrop-filter:saturate(var(--glass-sat)) blur(var(--glass-blur));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.50), 0 8px 24px rgba(0,0,0,var(--shadow-alpha));
+  border-bottom:1px solid rgba(255,255,255,var(--stroke-alpha));
+  overflow:visible;
+}
+.topbar__inner{max-width:var(--max);margin:0 auto;padding:10px 16px;
+  display:grid;grid-template-columns:1fr auto 1fr;grid-template-areas:"left center right";
+  align-items:center;gap:12px;}
+.topbar__left{grid-area:left;display:flex;align-items:center;gap:10px;justify-content:flex-start}
+.topbar__center{grid-area:center;display:flex;justify-content:center}
+.topbar__right{grid-area:right;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+
+@media (max-width:768px){
+  :root{ --logo-size:40px; --tg-size:16px; }
+  .topbar{ position: sticky; top: 0; border-bottom:0; }
+  .topbar__inner{
+    grid-template-columns:auto auto;
+    grid-template-areas:
+      "center left"
+      "right  right";
+    row-gap:6px;
+    padding:4px 8px 6px;
+    align-items:center;
+  }
+  .topbar__center{ justify-content:flex-end; }
+  .topbar__left{ justify-content:flex-start; }
+  .topbar__right{
+    justify-content:center; flex-wrap:nowrap; gap:10px;
+    padding:4px 8px !important; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .topbar__right::-webkit-scrollbar{display:none}
+  .glass-btn{padding:4px 8px;font-size:13px;line-height:1.1}
+}
+
+/* ---------- Buttons ---------- */
+.glass-btn{
+  position:relative;display:inline-flex;align-items:center;gap:8px;
+  padding:9px 12px;border-radius:999px;font-weight:600;color:#0b0b0b;
+  background:rgba(255,255,255,var(--btn-alpha));
+  border:1px solid transparent;
+  -webkit-backdrop-filter:saturate(1.1) blur(calc(var(--glass-blur)*.6));
+  backdrop-filter:saturate(1.1) blur(calc(var(--glass-blur)*.6));
+  box-shadow:0 6px 16px rgba(0,0,0,var(--btn-outer-shadow));
+  transition:background .15s ease, transform .06s ease, box-shadow .15s ease;
+  white-space:nowrap;
+}
+.glass-btn:hover{background:rgba(255,255,255,var(--btn-alpha-hover));box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.glass-btn:active{transform:translateY(1px)}
+.glass-btn:focus-visible{outline:none;box-shadow:0 0 0 2px rgba(0,0,0,.06), 0 8px 20px rgba(0,0,0,.12)}
+.tg-ic{width:var(--tg-size);height:var(--tg-size);flex:0 0 var(--tg-size);display:block;transform:translateY(1px)}
+
+/* ---------- Logo ---------- */
+.logo-circle{background:#fff;border-radius:50%;
+  width:calc(var(--logo-size) + 2px);height:calc(var(--logo-size) + 2px);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.logo-circle img{width:var(--logo-size);height:var(--logo-size);border-radius:50%;object-fit:cover}
+
+/* ---------- City tabs ---------- */
+.city-tabs{border-bottom:1px solid var(--border);padding:12px 16px;max-width:var(--max);margin:0 auto;
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.city-tabs button{padding:8px 14px;border:1px solid var(--border);background:#fff;border-radius:999px;cursor:pointer}
+.city-tabs button[aria-pressed="true"]{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ---------- Layout ---------- */
+.page{
+  max-width:var(--max);
+  margin:24px auto;
+  padding:0 16px;
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:24px;
+}
+
+/* Masonry под ленту: 3 колонки на десктопе */
+.feed{
+  column-count:3;
+  column-gap:16px;
+}
+.feed > *{
+  break-inside:avoid;
+  -webkit-column-break-inside:avoid;
+  margin-bottom:16px;
+  width:100%;
+  display:block;
+}
+
+@media (min-width:981px){
+  .sidebar{display:none}
+  .page{grid-template-columns:1fr}
+}
+
+/* Планшет: 2 колонки */
+@media (max-width:980px){
+  .page{grid-template-columns:1fr}
+  .feed{column-count:2}
+}
+/* Мобила: 2 колонки */
+@media (max-width:600px){
+  .feed{column-count:2; column-gap:12px;}
+}
+
+.card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff}
+
+/* ---------- Gallery ---------- */
+.card__media{aspect-ratio:4 / 5;background:#f3f4f6;position:relative;border-bottom:1px solid var(--border);overflow:hidden}
+.gallery{width:100%;height:100%;position:relative;user-select:none;touch-action:pan-y}
+.gallery__viewport{width:100%;height:100%;overflow:hidden}
+.gallery__track{height:100%;display:flex;transition:transform .35s ease;will-change:transform}
+.slide{min-width:100%;height:100%;position:relative;overflow:hidden;background:#eee}
+.slide > img,.slide > picture > img,.slide > video,.slide > iframe{width:100%;height:100%;object-fit:cover;display:block;border:0}
+
+.gallery__arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:999px;display:grid;place-items:center;background:rgba(255,255,255,.32);border:1px solid rgba(0,0,0,.06);-webkit-backdrop-filter:saturate(1.1) blur(10px);backdrop-filter:saturate(1.1) blur(10px);box-shadow:0 4px 12px rgba(0,0,0,.12);color:#0b0b0b;cursor:pointer}
+.gallery__arrow:hover{background:rgba(255,255,255,.42)}
+.gallery__arrow--prev{left:10px}
+.gallery__arrow--next{right:10px}
+.gallery__dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.24);border:1px solid rgba(0,0,0,.06);-webkit-backdrop-filter:saturate(1.1) blur(8px);backdrop-filter:saturate(1.1) blur(8px);box-shadow:0 4px 10px rgba(0,0,0,.08)}
+.gallery__dot{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.25);border:0;cursor:pointer;padding:0}
+.gallery__dot[aria-current="true"]{background:#0a0a0a}
+.card__body{padding:14px 16px}
+.card__kicker{font-size:12px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.card__title{margin:6px 0 8px;font-size:20px;line-height:1.3}
+.card__meta{display:flex;gap:12px;color:var(--muted);font-size:14px}
+
+.sidebar{display:grid;gap:16px}
+.slot__label{color:var(--muted);font-size:14px}
+
+.footer{border-top:1px solid var(--border);margin-top:32px}
+.footer__inner{max-width:var(--max);margin:0 auto;padding:20px 16px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+  .topbar{background:rgba(255,255,255,.9)}
+  .glass-btn{background:rgba(255,255,255,.98);border-color:rgba(0,0,0,.08)}
+}
+
+/* Промо-слот — базовая */
+.s-card{display:block;border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--border);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.s-card__media{aspect-ratio:4 / 3;background:#f3f4f6}
+.s-card__media img{width:100%;height:100%;object-fit:cover;display:block}
+.s-card__body{padding:12px 14px}
+.s-card__title{font-size:16px;font-weight:700;margin:0 0 6px}
+.s-card__meta{font-size:13px;color:var(--muted);margin-bottom:10px}
+.s-card__btn{display:inline-block;font-size:13px;font-weight:600;padding:8px 12px;border-radius:999px;background:rgba(0,0,0,.04)}
+.s-card__btn:hover{background:rgba(0,0,0,.08)}
+
+/* Итог: пунктирная рамка + внутренний отступ 10px */
+.slot--masonry,
+.slot--inline{
+  display:block;
+  padding:10px;
+  border:1px dashed var(--border);
+  border-radius:var(--radius);
+  background:#fff;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+.slot--masonry{margin-bottom:16px;}
+.slot--inline{margin:0;}
+.slot--masonry .s-card,
+.slot--inline .s-card{
+  border:none;
+  border-radius:calc(var(--radius) - 2px);
+  box-shadow:0 2px 16px rgba(255, 206, 212, 1);
+}
+@media (min-width:981px){
+  .slot--masonry .s-card__body{padding:10px 12px}
+  .slot--masonry .s-card__title{font-size:15px}
+  .slot--masonry .s-card__meta{font-size:12px;margin-bottom:8px}
+  .slot--masonry .s-card__btn{font-size:12px;padding:6px 10px}
+}
+
+  </style>
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
-    <div class="topbar__inner">
-        <div class="topbar__left">
-            <a class="glass-btn" href="https://t.me/kuda_namylilis" target="_blank">
-                <img class="tg-ic"
-                     src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/telegram-black-icon.png"
-                     alt="Telegram">
-                <span>Мы в Telegram</span>
-            </a>
-        </div>
-        <div class="topbar__center">
-            <a href="#" class="logo-circle"><img src="logo.jpeg" alt="Куда намылились"></a>
-        </div>
-        <nav class="topbar__right">
-            <a href="#" class="glass-btn" aria-current="page">Афиша</a>
-            <a href="#" class="glass-btn">Заведения</a>
-            <a href="#" class="glass-btn">Места</a>
-        </nav>
+  <div class="topbar__inner">
+    <div class="topbar__left">
+      <a class="glass-btn" href="https://t.me/kuda_namylilis" target="_blank">
+        <img class="tg-ic" src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/telegram-black-icon.png" alt="Telegram">
+        <span>Мы в Telegram</span>
+      </a>
     </div>
+    <div class="topbar__center">
+      <a href="#" class="logo-circle"><img src="logo.jpeg" alt="Куда намылились"></a>
+    </div>
+    <nav class="topbar__right">
+      <a href="#" class="glass-btn" aria-current="page">Афиша</a>
+      <a href="#" class="glass-btn">Заведения</a>
+      <a href="#" class="glass-btn">Места</a>
+    </nav>
+  </div>
 </div>
 
+<!-- Города -->
 <div class="city-tabs">
-    <button type="button" aria-pressed="true">Анапа</button>
-    <button type="button">Геленджик</button>
-    <button type="button">Новороссийск</button>
+  <button type="button" aria-pressed="true">Анапа</button>
+  <button type="button">Геленджик</button>
+  <button type="button">Новороссийск</button>
 </div>
 
+<!-- Контент -->
 <main class="page">
-    <section class="feed" id="feed"></section>
+  <section class="feed" id="feed"></section>
 
-    <aside class="sidebar" aria-label="Сайдбар">
-        <div class="slot">
-            <div class="slot__label">
-                <a class="s-card"
-                   href="https://yandex.ru/maps/org/kofe_leto/217951965397/?ll=37.326749%2C44.882456&z=13"
-                   target="_blank" rel="noopener"
-                   aria-label="Кофейня «Кофе Лето» — открыть на Яндекс Картах">
-                    <div class="s-card__media">
-                        <img src="https://avatars.mds.yandex.net/get-altay/3511135/2a0000017825bfa0163863bb3e32748ce949/XXXL"
-                             alt="Кофе Лето — кофейня, витрина и напитки">
-                    </div>
-                    <div class="s-card__body">
-                        <div class="s-card__title">Кофе Лето — уютная кофейня рядом</div>
-                        <div class="s-card__meta">Кофе • Десерты • To&nbsp;Go</div>
-                        <div class="s-card__btn">Открыть в Яндекс Картах</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="slot">
-            <div class="slot__label">
-                <a class="s-card"
-                   href="https://5verst.ru/plyazh40letpobedy/"
-                   target="_blank" rel="noopener"
-                   aria-label="5 ВЁРСТ АНАПА — сайт">
-                    <div class="s-card__media">
-                        <img src="https://5verst.ru/plyazh40letpobedy/wp-content/uploads/sites/179/2024/09/x1g9PEm7ij-Naf1sNQSwzsaDINEfF1_jvijro3KUmuY2Qk0zhKahT5DbWy9olq1ekJmD7uc3UEmtnnRiR8BLH28e-2048x1536.webp"
-                             alt="5 ВЁРСТ АНАПА">
-                    </div>
-                    <div class="s-card__body">
-                        <div class="s-card__title">5 ВЁРСТ АНАПА</div>
-                        <div class="s-card__meta">Бесплатные старты на 5 км по субботам</div>
-                        <div class="s-card__btn">Подробнее</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="slot">
-            <div class="slot__label">
-                <a class="s-card"
-                   href="https://t.me/wherelera"
-                   target="_blank" rel="noopener"
-                   aria-label="Креативный дизайн — Телеграм">
-                    <div class="s-card__media">
-                        <img src="murz.png" alt="Креативный дизайн">
-                    </div>
-                    <div class="s-card__body">
-                        <div class="s-card__title">Креативный дизайн</div>
-                        <div class="s-card__meta">Айдентика • Вёрстка • SMM</div>
-                        <div class="s-card__btn">Заказать</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </aside>
+  <aside class="sidebar" aria-label="Сайдбар">
+    <div class="slot">
+      <div class="slot__label">
+        <a class="s-card"
+           href="https://yandex.ru/maps/org/kofe_leto/217951965397/?ll=37.326749%2C44.882456&z=13"
+           target="_blank" rel="noopener" aria-label="Кофейня «Кофе Лето» — открыть на Яндекс Картах">
+          <div class="s-card__media">
+            <img src="https://avatars.mds.yandex.net/get-altay/3511135/2a0000017825bfa0163863bb3e32748ce949/XXXL" alt="Кофе Лето — кофейня, витрина и напитки">
+          </div>
+          <div class="s-card__body">
+            <div class="s-card__title">Кофе Лето — уютная кофейня рядом</div>
+            <div class="s-card__meta">Кофе • Десерты • To&nbsp;Go</div>
+            <div class="s-card__btn">Открыть в Яндекс Картах</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="slot__label">
+        <a class="s-card" href="https://5verst.ru/plyazh40letpobedy/" target="_blank" rel="noopener" aria-label="5 ВЁРСТ АНАПА — сайт">
+          <div class="s-card__media">
+            <img src="https://5verst.ru/plyazh40letpobedy/wp-content/uploads/sites/179/2024/09/x1g9PEm7ij-Naf1sNQSwzsaDINEfF1_jvijro3KUmuY2Qk0zhKahT5DbWy9olq1ekJmD7uc3UEmtnnRiR8BLH28e-2048x1536.webp" alt="5 ВЁРСТ АНАПА">
+          </div>
+          <div class="s-card__body">
+            <div class="s-card__title">5 ВЁРСТ АНАПА</div>
+            <div class="s-card__meta">Бесплатные старты на 5 км по субботам</div>
+            <div class="s-card__btn">Подробнее</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="slot__label">
+        <a class="s-card" href="https://t.me/wherelera" target="_blank" rel="noopener" aria-label="Креативный дизайн — Телеграм">
+          <div class="s-card__media">
+            <img src="murz.png" alt="Креативный дизайн">
+          </div>
+          <div class="s-card__body">
+            <div class="s-card__title">Креативный дизайн</div>
+            <div class="s-card__meta">Айдентика • Вёрстка • SMM</div>
+            <div class="s-card__btn">Заказать</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </aside>
 </main>
 
 <footer class="footer">
-    <div class="footer__inner">
-        <div>© <span id="y"></span> «Куда намылились»</div>
-        <div><a href="#">Реклама</a> · <a href="#">Правила</a> · <a href="#">Контакты</a></div>
-    </div>
+  <div class="footer__inner">
+    <div>© <span id="y"></span> «Куда намылились»</div>
+    <div><a href="#">Реклама</a> · <a href="#">Правила</a> · <a href="#">Контакты</a></div>
+  </div>
 </footer>
 
 <template id="post-card">
-    <article class="card">
-        <div class="card__media">
-            <div class="gallery" data-start="0">
-                <div class="gallery__viewport">
-                    <div class="gallery__track"></div>
-                </div>
-                <button class="gallery__arrow gallery__arrow--prev">‹</button>
-                <button class="gallery__arrow gallery__arrow--next">›</button>
-                <div class="gallery__dots"></div>
-            </div>
-        </div>
-        <div class="card__body">
-            <div class="card__kicker">Афиша • Юг</div>
-            <h2 class="card__title"><a href="#" target="_blank"></a></h2>
-            <div class="card__meta"></div>
-        </div>
-    </article>
+  <article class="card">
+    <div class="card__media">
+      <div class="gallery" data-start="0">
+        <div class="gallery__viewport"><div class="gallery__track"></div></div>
+        <button class="gallery__arrow gallery__arrow--prev">‹</button>
+        <button class="gallery__arrow gallery__arrow--next">›</button>
+        <div class="gallery__dots"></div>
+      </div>
+    </div>
+    <div class="card__body">
+      <div class="card__kicker">Афиша • Юг</div>
+      <h2 class="card__title"><a href="#" target="_blank"></a></h2>
+      <div class="card__meta"></div>
+    </div>
+  </article>
 </template>
 
 <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
+  document.getElementById('y').textContent = new Date().getFullYear();
 
-    async function loadPosts() {
-        const feed = document.getElementById('feed');
-        const tpl = document.getElementById('post-card');
-        const MEDIA_BASE = "media/";
-        const CHANNEL = "kuda_namylilis";
+  /* ====== Динамическая лента (без изменений вывода карточек) ====== */
+  async function loadPosts(){
+    const feed = document.getElementById('feed');
+    const tpl = document.getElementById('post-card');
+    const MEDIA_BASE = "media/";
+    const CHANNEL = "kuda_namylilis";
 
-        let posts = [];
-        try {
-            posts = await (await fetch("posts.json", {cache: "no-store"})).json();
-        } catch (e) {
-            console.error("Не удалось загрузить posts.json", e);
-            return;
+    let posts = [];
+    try{
+      posts = await (await fetch("posts.json",{cache:"no-store"})).json();
+    }catch(e){ console.error("Не удалось загрузить posts.json", e); return; }
+
+    posts.sort((a,b)=>b.id-a.id);
+    const frag = document.createDocumentFragment();
+
+    posts.forEach(p=>{
+      if(!p.media || !p.media.length || !p.text) return;
+      const node = tpl.content.cloneNode(true);
+      const link = `https://t.me/${CHANNEL}/${p.id}`;
+      const [first] = p.text.split("\n");
+      node.querySelector(".card__title a").textContent = first || `Пост #${p.id}`;
+      node.querySelector(".card__title a").href = link;
+      node.querySelector(".card__meta").textContent =
+        new Date(p.date).toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric"});
+
+      const track = node.querySelector(".gallery__track");
+      const dots  = node.querySelector(".gallery__dots");
+      const prevBtn = node.querySelector(".gallery__arrow--prev");
+      const nextBtn = node.querySelector(".gallery__arrow--next");
+
+      p.media.forEach((m,i)=>{
+        const slide = document.createElement("div"); slide.className="slide";
+
+        if(/\.(mp4|webm|mov)$/i.test(m)){
+          const video=document.createElement("video");
+          video.autoplay=true; video.muted=true; video.loop=true; video.playsInline=true; video.preload="metadata";
+          const source=document.createElement("source"); source.src=MEDIA_BASE+m; source.type="video/mp4";
+          video.appendChild(source); slide.appendChild(video);
+        }else{
+          const img=document.createElement("img");
+          img.src=MEDIA_BASE+m; img.loading="lazy"; img.width=1080; img.height=1350; img.alt=`${first || "Пост"} — ${m}`;
+          slide.appendChild(img);
         }
 
-        posts.sort((a, b) => b.id - a.id);
-        posts.forEach(p => {
-            if (!p.media || !p.media.length || !p.text) return;
-            const node = tpl.content.cloneNode(true);
-            const link = `https://t.me/${CHANNEL}/${p.id}`;
-            const [first] = p.text.split("\n");
-            node.querySelector(".card__title a").textContent = first || `Пост #${p.id}`;
-            node.querySelector(".card__title a").href = link;
-            node.querySelector(".card__meta").textContent = new Date(p.date).toLocaleDateString("ru-RU", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
-            });
+        track.appendChild(slide);
 
-            const track = node.querySelector(".gallery__track");
-            const dots = node.querySelector(".gallery__dots");
-            const prevBtn = node.querySelector(".gallery__arrow--prev");
-            const nextBtn = node.querySelector(".gallery__arrow--next");
+        const dot=document.createElement("button");
+        dot.className="gallery__dot"; dot.type="button"; dot.setAttribute("aria-label",`Слайд ${i+1}`);
+        dots.appendChild(dot);
+      });
 
-            p.media.forEach((m, i) => {
-                const slide = document.createElement("div");
-                slide.className = "slide";
+      if(p.media.length<2){
+        prevBtn.style.display="none";
+        nextBtn.style.display="none";
+        dots.style.display="none";
+      }
 
-                if (/\.(mp4|webm|mov)$/i.test(m)) {
-                    const video = document.createElement("video");
-                    video.autoplay = true;
-                    video.muted = true;
-                    video.loop = true;
-                    video.playsInline = true;
-                    video.preload = "metadata";
-                    const source = document.createElement("source");
-                    source.src = MEDIA_BASE + m;
-                    source.type = "video/mp4";
-                    video.appendChild(source);
-                    slide.appendChild(video);
-                } else {
-                    const img = document.createElement("img");
-                    img.src = MEDIA_BASE + m;
-                    img.loading = "lazy";
-                    img.width = 1080;
-                    img.height = 1350;
-                    img.alt = `${first || "Пост"} — ${m}`;
-                    slide.appendChild(img);
-                }
+      frag.appendChild(node);
+    });
 
-                track.appendChild(slide);
+    feed.appendChild(frag);
+    initGalleries();
+    mixAdsMasonry(); // перемешиваем с рекламой и строим «водопад»
+  }
 
-                const dot = document.createElement("button");
-                dot.className = "gallery__dot";
-                dot.type = "button";
-                dot.setAttribute("aria-label", `Слайд ${i + 1}`);
-                dots.appendChild(dot);
-            });
+  loadPosts();
 
-            if (p.media.length < 2) {
-                prevBtn.style.display = "none";
-                nextBtn.style.display = "none";
-                dots.style.display = "none";
-            }
+  /* ====== Табы городов (без изменений) ====== */
+  (function(){
+    const tabs=document.querySelectorAll('.city-tabs button');
+    if(!tabs.length) return;
+    tabs.forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        tabs.forEach(b=>b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+      });
+    });
+  })();
 
-            feed.appendChild(node);
+  /* ====== Галереи (без изменений) ====== */
+  function initGalleries(){
+    const galleries=document.querySelectorAll('.gallery');
+    galleries.forEach(gallery=>{
+      const viewport=gallery.querySelector('.gallery__viewport');
+      const track=gallery.querySelector('.gallery__track');
+      const slides=Array.from(track?track.children:[]);
+      const prevBtn=gallery.querySelector('.gallery__arrow--prev');
+      const nextBtn=gallery.querySelector('.gallery__arrow--next');
+      let dotsWrap=gallery.querySelector('.gallery__dots');
+      if(!viewport||!track||slides.length===0) return;
+      if(slides.length<2){
+        if(prevBtn) prevBtn.style.display='none';
+        if(nextBtn) nextBtn.style.display='none';
+        if(dotsWrap) dotsWrap.style.display='none';
+        track.style.transform='translateX(0%)';
+        return;
+      }
+      let index=Math.min(parseInt(gallery.getAttribute('data-start')||'0',10), slides.length-1);
+      let startX=0, currentX=0, dragging=false;
+
+      function buildDots(){
+        dotsWrap.innerHTML='';
+        slides.forEach((_,i)=>{
+          const dot=document.createElement('button');
+          dot.className='gallery__dot'; dot.type='button';
+          dot.setAttribute('aria-label',`Слайд ${i+1}`);
+          dot.addEventListener('click',()=>goTo(i));
+          dotsWrap.appendChild(dot);
         });
+      }
+      function updateDots(){
+        dotsWrap.querySelectorAll('.gallery__dot').forEach((d,i)=>{
+          if(i===index) d.setAttribute('aria-current','true'); else d.removeAttribute('aria-current');
+        });
+      }
+      function pauseAllExcept(i){
+        slides.forEach((slide,si)=>{
+          const v=slide.querySelector('video');
+          if(v){ if(si===i) v.play?.(); else v.pause?.(); }
+        });
+      }
+      function goTo(i){
+        index=Math.max(0,Math.min(i,slides.length-1));
+        track.style.transform=`translateX(${-100*index}%)`;
+        pauseAllExcept(index); updateDots();
+      }
+      if(prevBtn) prevBtn.addEventListener('click',()=>goTo(index-1));
+      if(nextBtn) nextBtn.addEventListener('click',()=>goTo(index+1));
+      gallery.addEventListener('keydown',(e)=>{ if(e.key==='ArrowLeft') goTo(index-1); if(e.key==='ArrowRight') goTo(index+1); });
+      gallery.setAttribute('tabindex','0');
 
-        initGalleries();
+      function onDown(x){ dragging=true; startX=x; currentX=x; track.style.transition='none'; }
+      function onMove(x){ if(!dragging) return; currentX=x; const dx=currentX-startX; const w=viewport.clientWidth||1; const p=(dx/w)*100; track.style.transform=`translateX(calc(${-100*index}% + ${p}%))`; }
+      function onUp(){ if(!dragging) return; dragging=false; const dx=currentX-startX; const w=viewport.clientWidth||1; track.style.transition=''; if(Math.abs(dx)>w*0.15){ if(dx<0) goTo(index+1); else goTo(index-1); } else { goTo(index); } }
+
+      viewport.addEventListener('mousedown',e=>onDown(e.clientX));
+      window.addEventListener('mousemove',e=>onMove(e.clientX));
+      window.addEventListener('mouseup',onUp);
+      viewport.addEventListener('touchstart',e=>onDown(e.touches[0].clientX),{passive:true});
+      viewport.addEventListener('touchmove',e=>onMove(e.touches[0].clientX),{passive:true});
+      viewport.addEventListener('touchend',onUp);
+
+      buildDots(); goTo(index);
+    });
+  }
+
+  /* ====== Перемешивание постов со слотами + Masonry (3/2/2 колонки) ====== */
+  function mixAdsMasonry(){
+    const feed = document.getElementById('feed');
+    const sidebar = document.querySelector('.sidebar');
+    if(!feed || !sidebar) return;
+
+    const cards = Array.from(feed.querySelectorAll('.card'));
+    const adsSrc = Array.from(sidebar.querySelectorAll('.slot'));
+    if(!cards.length || !adsSrc.length) return;
+
+    const result = [];
+    const pool = cards.slice();
+
+    while (pool.length){
+      const take = 3 + Math.floor(Math.random()*3);
+      for(let i=0; i<take && pool.length; i++){
+        result.push(pool.shift());
+      }
+      if (adsSrc.length){
+        const slot = adsSrc.shift();
+        slot.classList.add('slot--masonry');
+        result.push(slot);
+      }
     }
 
-    loadPosts();
-
-    (function () {
-        const tabs = document.querySelectorAll('.city-tabs button');
-        if (!tabs.length) return;
-        tabs.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabs.forEach(b => b.setAttribute('aria-pressed', 'false'));
-                btn.setAttribute('aria-pressed', 'true');
-            });
-        });
-    })();
-
-    function initGalleries() {
-        const galleries = document.querySelectorAll('.gallery');
-        galleries.forEach(gallery => {
-            const viewport = gallery.querySelector('.gallery__viewport');
-            const track = gallery.querySelector('.gallery__track');
-            const slides = Array.from(track ? track.children : []);
-            const prevBtn = gallery.querySelector('.gallery__arrow--prev');
-            const nextBtn = gallery.querySelector('.gallery__arrow--next');
-            let dotsWrap = gallery.querySelector('.gallery__dots');
-            if (!viewport || !track || slides.length === 0) return;
-            if (slides.length < 2) {
-                if (prevBtn) prevBtn.style.display = 'none';
-                if (nextBtn) nextBtn.style.display = 'none';
-                if (dotsWrap) dotsWrap.style.display = 'none';
-                track.style.transform = 'translateX(0%)';
-                return;
-            }
-            let index = Math.min(parseInt(gallery.getAttribute('data-start') || '0', 10), slides.length - 1);
-            let startX = 0, currentX = 0, dragging = false;
-            if (!dotsWrap) {
-                dotsWrap = document.createElement('div');
-                dotsWrap.className = 'gallery__dots';
-                dotsWrap.setAttribute('role', 'tablist');
-                dotsWrap.setAttribute('aria-label', 'Навигация по слайдам');
-                gallery.appendChild(dotsWrap);
-            }
-
-            function buildDots() {
-                dotsWrap.innerHTML = '';
-                slides.forEach((_, i) => {
-                    const dot = document.createElement('button');
-                    dot.className = 'gallery__dot';
-                    dot.type = 'button';
-                    dot.setAttribute('aria-label', `Слайд ${i + 1}`);
-                    dot.addEventListener('click', () => goTo(i));
-                    dotsWrap.appendChild(dot);
-                });
-            }
-
-            function updateDots() {
-                dotsWrap.querySelectorAll('.gallery__dot').forEach((d, i) => {
-                    if (i === index) d.setAttribute('aria-current', 'true');
-                    else d.removeAttribute('aria-current');
-                });
-            }
-
-            function pauseAllExcept(i) {
-                slides.forEach((slide, si) => {
-                    const v = slide.querySelector('video');
-                    if (v) {
-                        if (si === i) {
-                            v.play?.();
-                        } else {
-                            v.pause?.();
-                        }
-                    }
-                });
-            }
-
-            function goTo(i) {
-                index = Math.max(0, Math.min(i, slides.length - 1));
-                track.style.transform = `translateX(${-100 * index}%)`;
-                pauseAllExcept(index);
-                updateDots();
-            }
-
-            if (prevBtn) prevBtn.addEventListener('click', () => goTo(index - 1));
-            if (nextBtn) nextBtn.addEventListener('click', () => goTo(index + 1));
-            gallery.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') goTo(index - 1);
-                if (e.key === 'ArrowRight') goTo(index + 1);
-            });
-            gallery.setAttribute('tabindex', '0');
-
-            function onDown(clientX) {
-                dragging = true;
-                startX = clientX;
-                currentX = clientX;
-                track.style.transition = 'none';
-            }
-
-            function onMove(clientX) {
-                if (!dragging) return;
-                currentX = clientX;
-                const dx = currentX - startX;
-                const width = viewport.clientWidth || 1;
-                const percent = (dx / width) * 100;
-                track.style.transform = `translateX(calc(${-100 * index}% + ${percent}%))`;
-            }
-
-            function onUp() {
-                if (!dragging) return;
-                dragging = false;
-                const dx = currentX - startX;
-                const width = viewport.clientWidth || 1;
-                track.style.transition = '';
-                if (Math.abs(dx) > width * 0.15) {
-                    if (dx < 0) goTo(index + 1); else goTo(index - 1);
-                } else {
-                    goTo(index);
-                }
-            }
-
-            const md = e => onDown(e.clientX);
-            const mm = e => onMove(e.clientX);
-            viewport.addEventListener('mousedown', md);
-            window.addEventListener('mousemove', mm);
-            window.addEventListener('mouseup', onUp);
-            viewport.addEventListener('touchstart', e => onDown(e.touches[0].clientX), {passive: true});
-            viewport.addEventListener('touchmove', e => onMove(e.touches[0].clientX), {passive: true});
-            viewport.addEventListener('touchend', onUp);
-            buildDots();
-            goTo(index);
-        });
-    }
-
-    (function () {
-        const mq = window.matchMedia('(max-width: 768px)');
-        const feed = document.querySelector('.feed');
-        const sidebar = document.querySelector('.sidebar');
-        if (!feed || !sidebar) return;
-
-        const sourceSlots = Array.from(sidebar.querySelectorAll('.slot'));
-        const INLINE_CLASS = 'slot--inline';
-        const CLONE_ATTR = 'data-inline-clone';
-
-        function makeInlineSlot(idx) {
-            const slot = sourceSlots[idx % sourceSlots.length];
-            if (!slot) return null;
-            const clone = slot.cloneNode(true);
-            clone.classList.add(INLINE_CLASS);
-            clone.setAttribute(CLONE_ATTR, 'true');
-            return clone;
-        }
-
-        function clearInlineSlots() {
-            feed.querySelectorAll(`.${INLINE_CLASS}[${CLONE_ATTR}="true"]`).forEach(n => n.remove());
-        }
-
-        function applyMobile() {
-            clearInlineSlots();
-            const cards = Array.from(feed.querySelectorAll('.card'));
-            if (!cards.length || !sourceSlots.length) return;
-            let slotIndex = 0;
-            cards.forEach(card => {
-                const inline = makeInlineSlot(slotIndex++);
-                if (inline) card.insertAdjacentElement('afterend', inline);
-            });
-        }
-
-        function applyDesktop() {
-            clearInlineSlots();
-        }
-
-        function handle(e) {
-            e.matches ? applyMobile() : applyDesktop();
-        }
-
-        handle(mq);
-        mq.addEventListener('change', handle);
-    })();
-
-    (function () {
-        const sidebar = document.querySelector('.sidebar__inner');
-        if (!sidebar) return;
-
-        const offset = 24;
-        let isFixed = false;
-        let startTop = 0;
-
-        function update() {
-            const rect = sidebar.parentElement.getBoundingClientRect();
-            const scrollTop = window.scrollY;
-
-            if (startTop === 0) {
-                startTop = rect.top + scrollTop - offset;
-            }
-
-            if (scrollTop >= startTop) {
-                if (!isFixed) {
-                    sidebar.style.position = 'fixed';
-                    sidebar.style.top = offset + 'px';
-                    sidebar.style.width = sidebar.parentElement.offsetWidth + 'px';
-                    isFixed = true;
-                }
-            } else {
-                if (isFixed) {
-                    sidebar.style.position = '';
-                    sidebar.style.top = '';
-                    sidebar.style.width = '';
-                    isFixed = false;
-                }
-            }
-        }
-
-        window.addEventListener('scroll', update);
-        window.addEventListener('resize', () => {
-            startTop = 0;
-            update();
-        });
-
-        update();
-    })();
+    feed.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    result.forEach(n=>frag.appendChild(n));
+    feed.appendChild(frag);
+  }
 </script>
 
 </body>
