@@ -310,185 +310,298 @@ html,body{overflow-x:hidden}
 </template>
 
 <script>
-  document.getElementById('y').textContent = new Date().getFullYear();
+/* ====== Utils ====== */
+const $  = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
-  /* ====== Динамическая лента (без изменений вывода карточек) ====== */
-  async function loadPosts(){
-    const feed = document.getElementById('feed');
-    const tpl = document.getElementById('post-card');
-    const MEDIA_BASE = "media/";
-    const CHANNEL = "kuda_namylilis";
+const RU_DATE = new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
+const MEDIA_BASE = 'media/';
+const CHANNEL = 'kuda_namylilis';
+const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let posts = [];
-    try{
-      posts = await (await fetch("posts.json",{cache:"no-store"})).json();
-    }catch(e){ console.error("Не удалось загрузить posts.json", e); return; }
+/* ====== Footer year ====== */
+$('#y').textContent = new Date().getFullYear();
 
-    posts.sort((a,b)=>b.id-a.id);
-    const frag = document.createDocumentFragment();
+/* ====== Boot ====== */
+document.addEventListener('DOMContentLoaded', () => {
+  hydrateCityTabs();
+  loadPosts()
+    .then(() => { initGalleries(); mixAdsMasonry(); })
+    .catch(err => console.error('Загрузка ленты сорвалась', err));
+});
 
-    posts.forEach(p=>{
-      if(!p.media || !p.media.length || !p.text) return;
-      const node = tpl.content.cloneNode(true);
-      const link = `https://t.me/${CHANNEL}/${p.id}`;
-      const [first] = p.text.split("\n");
-      node.querySelector(".card__title a").textContent = first || `Пост #${p.id}`;
-      node.querySelector(".card__title a").href = link;
-      node.querySelector(".card__meta").textContent =
-        new Date(p.date).toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric"});
+/* ====== City tabs (как было, но компактнее) ====== */
+function hydrateCityTabs(){
+  const tabs = $$('.city-tabs button');
+  if (!tabs.length) return;
+  tabs.forEach(btn => btn.addEventListener('click', () => {
+    tabs.forEach(b => b.setAttribute('aria-pressed','false'));
+    btn.setAttribute('aria-pressed','true');
+  }, {passive:true}));
+}
 
-      const track = node.querySelector(".gallery__track");
-      const dots  = node.querySelector(".gallery__dots");
-      const prevBtn = node.querySelector(".gallery__arrow--prev");
-      const nextBtn = node.querySelector(".gallery__arrow--next");
+/* ====== Posts ====== */
+async function loadPosts(){
+  const feed = $('#feed');
+  const tpl  = $('#post-card');
+  if (!feed || !tpl) return;
 
-      p.media.forEach((m,i)=>{
-        const slide = document.createElement("div"); slide.className="slide";
-
-        if(/\.(mp4|webm|mov)$/i.test(m)){
-          const video=document.createElement("video");
-          video.autoplay=true; video.muted=true; video.loop=true; video.playsInline=true; video.preload="metadata";
-          const source=document.createElement("source"); source.src=MEDIA_BASE+m; source.type="video/mp4";
-          video.appendChild(source); slide.appendChild(video);
-        }else{
-          const img=document.createElement("img");
-          img.src=MEDIA_BASE+m; img.loading="lazy"; img.width=1080; img.height=1350; img.alt=`${first || "Пост"} — ${m}`;
-          slide.appendChild(img);
-        }
-
-        track.appendChild(slide);
-
-        const dot=document.createElement("button");
-        dot.className="gallery__dot"; dot.type="button"; dot.setAttribute("aria-label",`Слайд ${i+1}`);
-        dots.appendChild(dot);
-      });
-
-      if(p.media.length<2){
-        prevBtn.style.display="none";
-        nextBtn.style.display="none";
-        dots.style.display="none";
-      }
-
-      frag.appendChild(node);
-    });
-
-    feed.appendChild(frag);
-    initGalleries();
-    mixAdsMasonry(); // перемешиваем с рекламой и строим «водопад»
+  let posts;
+  const ctrl = new AbortController();
+  try{
+    const res = await fetch('posts.json', {cache:'no-store', signal: ctrl.signal});
+    if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+    posts = await res.json();
+  }catch(e){
+    console.error('Не удалось загрузить posts.json', e);
+    return;
   }
 
-  loadPosts();
+  if (!Array.isArray(posts) || posts.length === 0) return;
 
-  /* ====== Табы городов (без изменений) ====== */
-  (function(){
-    const tabs=document.querySelectorAll('.city-tabs button');
-    if(!tabs.length) return;
-    tabs.forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        tabs.forEach(b=>b.setAttribute('aria-pressed','false'));
-        btn.setAttribute('aria-pressed','true');
-      });
-    });
-  })();
+  posts.sort((a,b) => (b?.id||0) - (a?.id||0));
 
-  /* ====== Галереи (без изменений) ====== */
-  function initGalleries(){
-    const galleries=document.querySelectorAll('.gallery');
-    galleries.forEach(gallery=>{
-      const viewport=gallery.querySelector('.gallery__viewport');
-      const track=gallery.querySelector('.gallery__track');
-      const slides=Array.from(track?track.children:[]);
-      const prevBtn=gallery.querySelector('.gallery__arrow--prev');
-      const nextBtn=gallery.querySelector('.gallery__arrow--next');
-      let dotsWrap=gallery.querySelector('.gallery__dots');
-      if(!viewport||!track||slides.length===0) return;
-      if(slides.length<2){
-        if(prevBtn) prevBtn.style.display='none';
-        if(nextBtn) nextBtn.style.display='none';
-        if(dotsWrap) dotsWrap.style.display='none';
-        track.style.transform='translateX(0%)';
-        return;
+  const frag = document.createDocumentFragment();
+  for (const p of posts){
+    if (!p || !Array.isArray(p.media) || p.media.length === 0 || typeof p.text !== 'string') continue;
+
+    const node = tpl.content.cloneNode(true);
+    const link = `https://t.me/${CHANNEL}/${p.id}`;
+    const firstLine = (p.text.split('\n')[0] || '').trim() || `Пост #${p.id}`;
+
+    const aTitle = $('.card__title a', node);
+    aTitle.textContent = firstLine;
+    aTitle.href = link;
+    $('.card__meta', node).textContent = RU_DATE.format(new Date(p.date || Date.now()));
+
+    const track = $('.gallery__track', node);
+    const dots  = $('.gallery__dots',  node);
+    const prev  = $('.gallery__arrow--prev', node);
+    const next  = $('.gallery__arrow--next', node);
+
+    for (let i=0;i<p.media.length;i++){
+      const m = String(p.media[i]||'');
+      if (!m) continue;
+
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      slide.setAttribute('role','group');
+      slide.setAttribute('aria-roledescription','slide');
+      slide.setAttribute('aria-label', `${i+1} из ${p.media.length}`);
+
+      if (/\.(mp4|webm|mov)$/i.test(m)){
+        const video = document.createElement('video');
+        video.autoplay = true; video.muted = true; video.loop = true; video.playsInline = true; video.preload = 'metadata';
+        const src = document.createElement('source');
+        src.src = MEDIA_BASE + m;
+        src.type = inferVideoType(m);
+        video.appendChild(src);
+        slide.appendChild(video);
+      } else {
+        const img = document.createElement('img');
+        img.src = MEDIA_BASE + m;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.width = 1080; img.height = 1350;
+        img.alt = `${firstLine} — ${m}`;
+        slide.appendChild(img);
       }
-      let index=Math.min(parseInt(gallery.getAttribute('data-start')||'0',10), slides.length-1);
-      let startX=0, currentX=0, dragging=false;
 
-      function buildDots(){
-        dotsWrap.innerHTML='';
-        slides.forEach((_,i)=>{
-          const dot=document.createElement('button');
-          dot.className='gallery__dot'; dot.type='button';
-          dot.setAttribute('aria-label',`Слайд ${i+1}`);
-          dot.addEventListener('click',()=>goTo(i));
-          dotsWrap.appendChild(dot);
-        });
-      }
-      function updateDots(){
-        dotsWrap.querySelectorAll('.gallery__dot').forEach((d,i)=>{
-          if(i===index) d.setAttribute('aria-current','true'); else d.removeAttribute('aria-current');
-        });
-      }
-      function pauseAllExcept(i){
-        slides.forEach((slide,si)=>{
-          const v=slide.querySelector('video');
-          if(v){ if(si===i) v.play?.(); else v.pause?.(); }
-        });
-      }
-      function goTo(i){
-        index=Math.max(0,Math.min(i,slides.length-1));
-        track.style.transform=`translateX(${-100*index}%)`;
-        pauseAllExcept(index); updateDots();
-      }
-      if(prevBtn) prevBtn.addEventListener('click',()=>goTo(index-1));
-      if(nextBtn) nextBtn.addEventListener('click',()=>goTo(index+1));
-      gallery.addEventListener('keydown',(e)=>{ if(e.key==='ArrowLeft') goTo(index-1); if(e.key==='ArrowRight') goTo(index+1); });
-      gallery.setAttribute('tabindex','0');
+      track.appendChild(slide);
 
-      function onDown(x){ dragging=true; startX=x; currentX=x; track.style.transition='none'; }
-      function onMove(x){ if(!dragging) return; currentX=x; const dx=currentX-startX; const w=viewport.clientWidth||1; const p=(dx/w)*100; track.style.transform=`translateX(calc(${-100*index}% + ${p}%))`; }
-      function onUp(){ if(!dragging) return; dragging=false; const dx=currentX-startX; const w=viewport.clientWidth||1; track.style.transition=''; if(Math.abs(dx)>w*0.15){ if(dx<0) goTo(index+1); else goTo(index-1); } else { goTo(index); } }
-
-      viewport.addEventListener('mousedown',e=>onDown(e.clientX));
-      window.addEventListener('mousemove',e=>onMove(e.clientX));
-      window.addEventListener('mouseup',onUp);
-      viewport.addEventListener('touchstart',e=>onDown(e.touches[0].clientX),{passive:true});
-      viewport.addEventListener('touchmove',e=>onMove(e.touches[0].clientX),{passive:true});
-      viewport.addEventListener('touchend',onUp);
-
-      buildDots(); goTo(index);
-    });
-  }
-
-  /* ====== Перемешивание постов со слотами + Masonry (3/2/2 колонки) ====== */
-  function mixAdsMasonry(){
-    const feed = document.getElementById('feed');
-    const sidebar = document.querySelector('.sidebar');
-    if(!feed || !sidebar) return;
-
-    const cards = Array.from(feed.querySelectorAll('.card'));
-    const adsSrc = Array.from(sidebar.querySelectorAll('.slot'));
-    if(!cards.length || !adsSrc.length) return;
-
-    const result = [];
-    const pool = cards.slice();
-
-    while (pool.length){
-      const take = 3 + Math.floor(Math.random()*3);
-      for(let i=0; i<take && pool.length; i++){
-        result.push(pool.shift());
-      }
-      if (adsSrc.length){
-        const slot = adsSrc.shift();
-        slot.classList.add('slot--masonry');
-        result.push(slot);
-      }
+      const dot = document.createElement('button');
+      dot.className = 'gallery__dot';
+      dot.type = 'button';
+      dot.setAttribute('aria-label', `Слайд ${i+1}`);
+      dots.appendChild(dot);
     }
 
-    feed.innerHTML = '';
-    const frag = document.createDocumentFragment();
-    result.forEach(n=>frag.appendChild(n));
-    feed.appendChild(frag);
+    if (p.media.length < 2){
+      prev.style.display = 'none';
+      next.style.display = 'none';
+      dots.style.display = 'none';
+    }
+
+    frag.appendChild(node);
   }
+
+  feed.appendChild(frag);
+}
+
+/* ====== Gallery (pointer events + rAF) ====== */
+function initGalleries(){
+  const galleries = $$('.gallery');
+  for (const gallery of galleries){
+    const viewport = $('.gallery__viewport', gallery);
+    const track    = $('.gallery__track', gallery);
+    const slides   = $$('.slide', track);
+    const prevBtn  = $('.gallery__arrow--prev', gallery);
+    const nextBtn  = $('.gallery__arrow--next', gallery);
+    const dotsWrap = $('.gallery__dots', gallery);
+    if (!viewport || !track || slides.length === 0) continue;
+
+    if (slides.length < 2){
+      if (prevBtn) prevBtn.style.display='none';
+      if (nextBtn) nextBtn.style.display='none';
+      if (dotsWrap) dotsWrap.style.display='none';
+      track.style.transform='translateX(0%)';
+      continue;
+    }
+
+    const startIndex = clamp(parseInt(gallery.getAttribute('data-start')||'0',10), 0, slides.length-1);
+    let index = startIndex;
+    let dragging = false;
+    let startX = 0, dx = 0;
+    let raf = 0;
+
+    buildDots(dotsWrap, slides.length, (i)=>goTo(i));
+    gallery.setAttribute('tabindex','0');
+    gallery.addEventListener('keydown', (e)=>{
+      if (e.key === 'ArrowLeft')  goTo(index-1);
+      if (e.key === 'ArrowRight') goTo(index+1);
+    }, {passive:true});
+
+    if (prevBtn) prevBtn.addEventListener('click', ()=>goTo(index-1));
+    if (nextBtn) nextBtn.addEventListener('click', ()=>goTo(index+1));
+
+    viewport.addEventListener('pointerdown', onDown, {passive:true});
+    viewport.addEventListener('pointercancel', onUp, {passive:true});
+    viewport.addEventListener('pointerleave', onUp, {passive:true});
+
+    function onDown(e){
+      if (prefersReduced) return;
+      dragging = true;
+      startX = e.clientX;
+      dx = 0;
+      track.style.transition = 'none';
+      viewport.setPointerCapture(e.pointerId);
+      window.addEventListener('pointermove', onMove, {passive:true});
+      window.addEventListener('pointerup', onUp,   {once:true, passive:true});
+    }
+    function onMove(e){
+      if (!dragging) return;
+      dx = e.clientX - startX;
+      if (!raf) raf = requestAnimationFrame(updateDrag);
+    }
+    function updateDrag(){
+      raf = 0;
+      const w = viewport.clientWidth || 1;
+      const p = (dx / w) * 100;
+      track.style.transform = `translateX(calc(${-100*index}% + ${p}%))`;
+    }
+    function onUp(){
+      if (!dragging) return;
+      dragging = false;
+      track.style.transition = '';
+      const w = viewport.clientWidth || 1;
+      if (Math.abs(dx) > w * 0.15){
+        if (dx < 0) goTo(index+1); else goTo(index-1);
+      } else {
+        goTo(index);
+      }
+      window.removeEventListener('pointermove', onMove, {passive:true});
+    }
+
+    function goTo(i){
+      index = clamp(i, 0, slides.length-1);
+      track.style.transform = `translateX(${-100*index}%)`;
+      pauseAllExcept(slides, index);
+      updateDots(dotsWrap, index);
+    }
+
+    goTo(startIndex);
+  }
+}
+
+function buildDots(wrap, count, onClick){
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  for (let i=0;i<count;i++){
+    const b = document.createElement('button');
+    b.className = 'gallery__dot';
+    b.type = 'button';
+    b.setAttribute('aria-label', `Слайд ${i+1}`);
+    b.addEventListener('click', ()=>onClick(i));
+    wrap.appendChild(b);
+  }
+}
+
+function updateDots(wrap, active){
+  if (!wrap) return;
+  $$('.gallery__dot', wrap).forEach((d,i)=>{
+    if (i===active) d.setAttribute('aria-current','true');
+    else d.removeAttribute('aria-current');
+  });
+}
+
+function pauseAllExcept(slides, iKeep){
+  for (let i=0;i<slides.length;i++){
+    const v = $('video', slides[i]);
+    if (!v) continue;
+    if (i===iKeep) v.play?.(); else v.pause?.();
+  }
+}
+
+/* ====== Ads mixing: детерминированная врезка ====== */
+/* Схема: после каждых 4 карточек вставляется один слот, затем шаг 5, затем снова 4, и так по кругу.
+   Внешний вид прежний: slot получает класс .slot--masonry. */
+function mixAdsMasonry(){
+  const feed = $('#feed');
+  const sidebar = $('.sidebar');
+  if (!feed || !sidebar) return;
+
+  const cards = $$('.card', feed);
+  const adsSrc = $$('.slot', sidebar);
+  if (!cards.length || !adsSrc.length) return;
+
+  const plan = cycle([4,5]); // шаги между врезками
+  let nextBreak = plan.next().value;
+
+  const result = [];
+  let taken = 0, adIndex = 0;
+
+  for (let i=0;i<cards.length;i++){
+    result.push(cards[i]);
+    taken++;
+    if (taken === nextBreak && adIndex < adsSrc.length){
+      const slot = adsSrc[adIndex++];
+      slot.classList.add('slot--masonry');
+      result.push(slot);
+      taken = 0;
+      nextBreak = plan.next().value;
+    }
+  }
+  // хвостовые слоты (если остались)
+  while (adIndex < adsSrc.length){
+    const slot = adsSrc[adIndex++];
+    slot.classList.add('slot--masonry');
+    result.push(slot);
+  }
+
+  // Перестройка DOM за один проход
+  feed.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (const n of result) frag.appendChild(n);
+  feed.appendChild(frag);
+}
+
+/* ====== Helpers ====== */
+function clamp(n, min, max){ return n < min ? min : n > max ? max : n; }
+function cycle(arr){
+  let i = 0;
+  return {
+    next(){ const v = arr[i]; i = (i+1) % arr.length; return {value:v, done:false}; }
+  };
+}
+function inferVideoType(name){
+  const ext = name.split('.').pop()?.toLowerCase();
+  if (ext === 'mp4')  return 'video/mp4';
+  if (ext === 'webm') return 'video/webm';
+  if (ext === 'mov')  return 'video/quicktime';
+  return 'video/mp4';
+}
 </script>
+
 
 </body>
 </html>
