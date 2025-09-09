@@ -1,0 +1,31 @@
+# по умолчанию исключаем всё
+*
+
+# а это явно ДОБАВЛЯЕМ:
+!index.html
+!media/**
+!*.jpg
+!*.JPG
+!*.jpeg
+!*.png
+!*.gif
+!*.webp
+!*.svg
+!*.ico
+!*.mp4
+!vk.png
+!tg.png
+!logo.jpeg
+!afisha.jpeg
+!batumi.jpeg
+!cookies.jpeg
+!himkali.jpeg
+!monk.jpeg
+!new.jpeg
+!season.jpeg
+!lera.JPG
+
+# (если нужны 111.html / 222.html / modal.html — тоже добавь)
+!111.html
+!222.html
+!modal.html
