@@ -1,5 +1,4 @@
-# parse_only_captioned_media.py
-import os, json, pathlib, time
+import os, json, pathlib, time, sys
 from pyrogram import Client
 from pyrogram.errors import FloodWait
 from dotenv import load_dotenv
@@ -75,6 +74,7 @@ with Client(SESSION, api_id=API_ID, api_hash=API_HASH) as app:
                     "media": media_files
                 })
                 collected += 1
+                print(f"[{collected}/{LIMIT}] Собрано (single)")  # <--- прогресс
                 continue
 
             # альбом
@@ -108,6 +108,7 @@ with Client(SESSION, api_id=API_ID, api_hash=API_HASH) as app:
                         "media": media_files
                     })
                     collected += 1
+                    print(f"[{collected}/{LIMIT}] Собрано (album)")  # <--- прогресс
                 groups[gid] = True
                 continue
 
